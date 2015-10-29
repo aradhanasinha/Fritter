@@ -52,6 +52,7 @@ var User = (function User(_store) {
       callback({ msg : 'Invalid user.' });
     }
     listOfAllUsers = Object.keys(_store);
+    listOfAllUsers.splice( listOfAllUsers.indexOf(username) , 1);
     usersFollowed = user.follows;
     usersNotFollowed = arrayDiff(listOfAllUsers, usersFollowed);
     callback(null, usersFollowed, usersNotFollowed);
@@ -85,7 +86,7 @@ var User = (function User(_store) {
       _store[username] = 
 	       { 'username' : username,
                  'password' : password,
-		 'follows'  : [username],
+		 'follows'  : [],
                  'notes' : [] };
       callback(null);
     }
@@ -115,12 +116,14 @@ var User = (function User(_store) {
   };
 
   //mine - works
-  that.getAllNotes = function(callback) {
+  that.getAllNotes = function(currentUser, callback) {
     console.log("4. models/User.js >> getAllNotes function called");
     var safeStore = []
     for (var username in _store) {
-      var user = getUser(username);
-      safeStore = safeStore.concat(user.notes);
+      if (username != currentUser) {
+         var user = getUser(username);
+         safeStore = safeStore.concat(user.notes);
+      }
     }
     callback(null, safeStore);
   };

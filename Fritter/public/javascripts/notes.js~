@@ -69,4 +69,22 @@
           $('.error').text(response.err);
       });
   });
+
+  $(document).on('click', '.refritter-note', function(evt) {
+      var item = $(this).parent();
+      var originalPoster = item.data('creator');
+      var fritterText = item.data('frittertext');
+      var content = "ReFrittered from " + originalPoster + ": " + fritterText;
+      
+      $.post(
+          '/notes',
+          { content: content }
+      ).done(function(response) {
+          loadHomePage();
+      }).fail(function(responseObject) {
+          var response = $.parseJSON(responseObject.responseText);
+          $('.error').text(response.err);
+      });
+  });
+
 })();

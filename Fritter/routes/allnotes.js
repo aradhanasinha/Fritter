@@ -37,7 +37,7 @@ router.all('*', requireAuthentication);
 */
 router.get('/', function(req, res) {
   console.log("3. routes/allnotes.js >> router.get('/allnotes'...");
-  User.getAllNotes(function(err, notes) {
+  User.getAllNotes(req.currentUser.username, function(err, notes) {
     console.log("routes/allnotes.js >> router.get('/allnotes'... >> callback for getAllNotes");
     console.log(err);
     console.log(notes);
