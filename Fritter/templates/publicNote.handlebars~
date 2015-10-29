@@ -1,0 +1,4 @@
+<div class="note" data-note-id={{_id}}>
+  <p>{{creator}}</p>
+  <p>{{content}}</p>
+</div>

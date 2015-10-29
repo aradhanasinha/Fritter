@@ -1,0 +1,30 @@
+<div id="notes">
+
+  <p>Welcome, {{currentUser}} (<a href="#" id="logout-link">logout</a>)</p>
+  
+  <p> <a href="#" id="myfritters-link"> See My Fritters </a> </p>
+  <p> <a href="#" id="allfritters-link"> See All Fritters </a> </p>
+  <p> <a href="#" id="userstofollow-link"> Find Users To Follow </a> </p>
+  <p> <a href="#" id="followersfritters-link"> See Fritters from users you follow </a> </p>
+
+  <h1>Users I follow</h1>
+
+  {{#each usersFollowed }}
+    {{> userFollowed }}
+  {{else}}
+    <p><em>Not following any users yet!</em></p>
+  {{/each}}
+
+  <p> </p>
+
+  <h1>Find more friends</h1>
+
+  {{#each usersNotFollowed }}
+    {{> userNotFollowed }}
+  {{else}}
+    <p><em> No other users exist. </em></p>
+  {{/each}}
+
+
+
+</div>

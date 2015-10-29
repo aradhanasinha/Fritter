@@ -1,0 +1,5 @@
+<div class="note" data-note-id={{_id}}>
+  <p>{{content}}</p>
+  <a href="#" class="edit-note">Edit</a>
+  <a href="#" class="delete-note">Delete</a>
+</div>

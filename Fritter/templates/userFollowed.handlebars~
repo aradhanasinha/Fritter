@@ -1,0 +1,4 @@
+<div data-username={{this}}>
+  <p><b>{{this}}</b></p>
+  <a href="#" class="unfollow-user">Unfollow</a>
+</div>
