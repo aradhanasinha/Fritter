@@ -49,50 +49,6 @@ var requireContent = function(req, res, next) {
   }
 };
 
-
-/* mine
-  GET /notes/allnotes
-  No request parameters
-  Response:
-    - success: true if the server succeeded in getting all users' notes
-    - content: on success, an object with a single field 'notes', which contains a list of the
-    user's notes in the form "username: content"
-    - err: on failure, an error message
-
-router.get('/allnotes', function(req, res) {
-  console.log("3. routes/notes.js >> router.get('/allnotes'...");
-  User.getAllNotes(function(err, notes) {
-    if (err) {
-      utils.sendErrResponse(res, 500, 'An unknown error occurred.');
-    } else {
-      utils.sendSuccessResponse(res, { notes : notes });
-    }
-  });
-});
-
-*/
-
-/* mine
-  GET /notes/follows
-  No request parameters
-  Response:
-    - success: true if the server succeeded in getting all users' notes that current user is following
-    - content: on success, an object with a single field 'notes', which contains a list of the
-    user's notes in the form "username: content"
-    - err: on failure, an error message
-*/
-router.get('/follows', function(req, res) {
-  User.getFollowsNotes(function(err, notes) {
-    if (err) {
-      utils.sendErrResponse(res, 500, 'An unknown error occurred.');
-    } else {
-      utils.sendSuccessResponse(res, { notes : notes });
-    }
-  });
-});
-
-
-
 /*
   Grab a note from the store whenever one is referenced with an ID in the
   request path (any routes defined with :note as a parameter).
@@ -131,13 +87,8 @@ router.post('*', requireContent);
     - err: on failure, an error message
 */
 router.get('/', function(req, res) {
-  User.getNotes(req.currentUser.username, function(err, notes) {
-    if (err) {
-      utils.sendErrResponse(res, 500, 'An unknown error occurred.');
-    } else {
-      utils.sendSuccessResponse(res, { notes: notes });
-    }
-  });
+  console.log("router/notes GET function called");
+  User.getNotes(req.currentUser.username, res, function(err) { });
 });
 
 

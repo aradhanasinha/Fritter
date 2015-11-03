@@ -2,7 +2,16 @@
 // a database. This store (and internal code within the User model)
 // could in principle be replaced by a database without needing to
 // modify any code in the controller.
-var _store = { };
+var utils = require('../utils/utils');
+var mongoose = require("mongoose");
+
+
+var userSchema = mongoose.Schema({
+	username: String,
+	password: String,
+	follows : [String],
+	notes: [{ creator: String, content: String }]
+});
 
 // Model code for a User object in the note-taking app.
 // Each User object stores a username, password, and collection
@@ -10,150 +19,256 @@ var _store = { };
 // by the owner's username as well as an ID. Each ID is unique
 // only within the space of each User, so a (username, noteID)
 // uniquely specifies any note.
-var User = (function User(_store) {
 
-  var that = Object.create(User.prototype);
+//Global Variables:
+var emptyDbResponse = "no entries found";
 
-  var userExists = function(username) {
-    return _store[username] !== undefined;
-  }
+//Helper functions, only accessible to internal functions
+var infoRetrieved = emptyDbResponse;
+var currentUser = emptyDbResponse;
 
-  var getUser = function(username) {
-    if (userExists(username)) {
-      return _store[username];
-    }
-  }
-
+var setCurrentUser = function(err, user) {
+	console.log("setCurrentUser called");
+  	if (err) {
+     		return utils.sendErrResponse(user,
+			 500, 'An unknown error occurred.');
+  	}
   
-  var arrayDiff = function(a1, a2) {
-    var a=[], diff=[];
-    for(var i=0;i<a1.length;i++) {
-      a[a1[i]]=true; 
-    }
-    for(var i=0;i<a2.length;i++) {
-      if(a[a2[i]]) {
-         delete a[a2[i]];
-      } else {
-         a[a2[i]]=true; 
-      }
-    }
-    for(var k in a) {
-      diff.push(k);
-    }
-    return diff;
-  }
+	if (!user) {
+    		currentUser = emptyDbResponse;
+  	} else {
+    		currentUser = user;
+  	}
+	console.log(currentUser);
+};
+
+var setInfoRetrieved = function(err, info) {
+  	if (err) {
+     		return utils.sendErrResponse(info, 
+			500, 'An unknown error occurred.');
+  	}
+  
+	if (!info) {
+    		infoRetrieved = emptyDbResponse;
+  	} else {
+    		infoRetrieved = info;
+  	}
+};
+
+
+//Internal functions: all functions that have mongoose code
+var arrayDiff = function(a1, a2) {
+    	var a=[], diff=[];
+
+    	for ( var i = 0 ; i < a1.length ; i++) {
+      		a[a1[i]]=true; 
+    	}
+
+    	for ( var i = 0 ; i < a2.length ; i++) {
+      		if(a[a2[i]]) {
+         		delete a[a2[i]];
+      		} else {
+         		a[a2[i]]=true; 
+      		}
+    	}
+
+    	for ( var k in a ) {
+      		diff.push(k);
+    	}
+
+    	return diff;
+};
+
+
+userSchema.statics.getUser = function (name) {
+	console.log("getUser internal fxn called");
+  	User.find({ username: name }, setCurrentUser(err, user));
+  	var user = currentUser;
+  	return user
+};
+
+userSchema.statics.getListOfAllUsernames = function () {
+  	var query = User.find({});
+  	query.select('username');
+  	query.exec(setInfoRetrieved(err, info));
+  	var allUsernames = infoRetrieved;
+  	return allUsernames
+};
+
+userSchema.statics.saveToDatabase = function(user) {
+	user.save(function (err) { if (err) 
+		return utils.sendErrResponse('save', 500, 'An unknown error occurred.');
+	});
+};
+
+//Statics
+userSchema.statics.getListOfUsersByWhetherFollowed = function (username) {
+	console.log("4. models/User.js >> getListOfUsersByWhetherFollowed function called");
+
+	var user = getUser(username);
+	if (user === emptyDbResponse) {
+		callback({ msg : 'Invalid user.' });
+	}
+
+	var listOfAllUsers = getListOfAllUsernames();
+	listOfAllUsers.splice( listOfAllUsers.indexOf(username) , 1);
+	var usersFollowed = user.follows;
+	var usersNotFollowed = arrayDiff(listOfAllUsers, usersFollowed);
+	callback(null, usersFollowed, usersNotFollowed);
+};
+
+userSchema.statics.findByUsername = function (username, callback) {
+	var user = getUser(username);
+	if (user === emptyDbResponse) {
+		callback({ msg : 'No such user!' });
+	}
+	callback(null, user);
+};
+
+//works
+userSchema.statics.verifyPassword = function(candidateUsername, candidatepw, req, res, callback) {
+	console.log("Models > User > verifyPassword function called");
+	this.find({ username: candidateUsername }, function(err, users) {
+  		if (err) {
+			console.log("ERROR: db find lookup");
+			utils.sendErrResponse(res, 500, 'An unknown error has occurred.');
+  		} else {
+  
+			if (users.length === 0) {
+				console.log("ERROR: no user exists");
+				utils.sendErrResponse(res, 403, 'Username or password invalid.');
+			} else {
+				var user = users[0];
+				if (candidatepw === user.password) {
+      					req.session.username = candidateUsername;
+					console.log("SUCCESS: log-in approved.");
+      					utils.sendSuccessResponse(res, { user : candidateUsername });
+    				} else {
+					console.log("ERROR: password mismatch");
+      					utils.sendErrResponse(res, 403, 'Username or password invalid.');
+    				}
+			}
+		}
+	});
+	callback(null);
+    	
+};
+
+//works
+userSchema.statics.createNewUser = function (newUsername, newPassword, res, callback) {
+	console.log("Models > User > createNewUser function called");
+	var newUser = new this();
+	this.find({ username: newUsername }, function(err, users) {
+  		if (err) {
+			console.log("ERROR: db find lookup");
+			utils.sendErrResponse(res, 500, 'An unknown error has occurred.');
+  		} else {
+  
+			if (users.length === 0) {
+				newUser.username = newUsername;
+				newUser.password = newPassword;
+				newUser.follows = [];
+				newUser.notes = [];
+	
+    				newUser.save(function (err) { 
+					if (err) {
+						console.log("ERROR: db save");
+						utils.sendErrResponse(res, 500, 'An unknown error has occurred.');
+					} else {
+						console.log("SUCCESS: new user registered");
+						utils.sendSuccessResponse(res, newUsername);
+					}
+				});
+  			} else {
+				console.log("ERROR: username already taken");
+				utils.sendErrResponse(res, 400, 'That username is already taken!');
+  			}
+		}
+	});
+	callback(null);	
+};
+
+userSchema.statics.getNote = function(username, noteId, callback) {
+    	var user = getUser(username);
+    	if (user === emptyDbResponse) {
+        	callback({ msg : 'Invalid user. '});
+    	}
+    
+    	if (user.notes[noteId]) {
+        	var note = user.notes[noteId];
+        	callback(null, note);
+    	} else {
+        	callback({ msg : 'Invalid note. '});
+    	}
+};
+
+//can't reach notes router from index.js, halppp
+userSchema.statics.getNotes = function(currentUsername, res, callback) {
+	console.log("Models > User > getNotes function called");
+	this.findOne({ username: currentUsername }, function(err, user) {
+		console.log(err);
+		console.log(user);
+  		if (err) {
+			console.log("ERROR: db find lookup");
+			utils.sendErrResponse(res, 500, 'An unknown error has occurred.');
+  		} else {  
+			utils.sendSuccessResponse(res, { notes: user.notes });			
+			/* if (users.length === 0) {
+				console.log("ERROR: no user exists in db");
+				utils.sendErrResponse(res, 500, 'An unknown error has occurred.');
+			} else {
+				var user = users[0];
+				utils.sendSuccessResponse(res, { notes: user.notes });
+			} */
+		}
+	});    	
+    	callback(null);
+};
+
+  //mine - worked
+userSchema.statics.getAllNotes = function(userLoggedIn, callback) {
+    	console.log("4. models/User.js >> getAllNotes function called");
+    	var safeStore = []
+    	var listOfAllUsers = getListOfAllUsernames();
+
+    	for (var i = 0; i < listOfAllUsers.length; i++) {
+      		var username = listOfAllUsers[i];
+      		if (username !== userLoggedIn) {
+         		var user = getUser(username);
+         		safeStore = safeStore.concat(user.notes);
+      		}
+    	}
+    	callback(null, safeStore);
+};
 
   //mine - works
-  that.getListOfUsersByWhetherFollowed = function (username, callback) {
-    console.log("4. models/User.js >> getListOfUsersByWhetherFollowed function called");
-    if (userExists(username)) {
-      var user = getUser(username);
-    } else {
-      callback({ msg : 'Invalid user.' });
-    }
-    listOfAllUsers = Object.keys(_store);
-    listOfAllUsers.splice( listOfAllUsers.indexOf(username) , 1);
-    usersFollowed = user.follows;
-    usersNotFollowed = arrayDiff(listOfAllUsers, usersFollowed);
-    callback(null, usersFollowed, usersNotFollowed);
-  }
+userSchema.statics.getFollowsNotes = function(username, callback) {
+	console.log("4. models/User.js >> getFollowsNotes function called");
+    	var safeStore = []
+    
+    	var user = getUser(username);
+	if (user === emptyDbResponse) {
+        	callback({ msg : 'Invalid user. '});
+    	}
+    
+    	var follows = user.follows;
 
-  that.findByUsername = function (username, callback) {
-    if (userExists(username)) {
-      callback(null, getUser(username));
-    } else {
-      callback({ msg : 'No such user!' });
-    }
-  }
-
-  that.verifyPassword = function(username, candidatepw, callback) {
-    if (userExists(username)) {
-      var user = getUser(username);
-      if (candidatepw === user.password) {
-        callback(null, true);
-      } else {
-        callback(null, false);
-      }
-    } else {
-      callback(null, false);
-    }
-  }
-
-  that.createNewUser = function (username, password, callback) {
-    if (userExists(username)) {
-      callback({ taken: true });
-    } else {
-      _store[username] = 
-	       { 'username' : username,
-                 'password' : password,
-		 'follows'  : [],
-                 'notes' : [] };
-      callback(null);
-    }
-  };
-
-  that.getNote = function(username, noteId, callback) {
-    if (userExists(username)) {
-      var user = getUser(username);
-      if (user.notes[noteId]) {
-        var note = user.notes[noteId];
-        callback(null, note);
-      } else {
-        callback({ msg : 'Invalid note. '});
-      }
-    } else {
-      callback({ msg : 'Invalid user. '});
-    }
-  };
-
-  that.getNotes = function(username, callback) {
-    if (userExists(username)) {
-      var user = getUser(username);
-      callback(null, user.notes);
-    } else {
-      callback({ msg : 'Invalid user.' });
-    }
-  };
+    	for (var i = 0; i < follows.length; i++) {
+      		var username = follows[i];
+      		var userFollows = getUser(username);
+      		safeStore = safeStore.concat(userFollows.notes);
+    	}
+    	callback(null, safeStore);
+};
 
   //mine - works
-  that.getAllNotes = function(currentUser, callback) {
-    console.log("4. models/User.js >> getAllNotes function called");
-    var safeStore = []
-    for (var username in _store) {
-      if (username != currentUser) {
-         var user = getUser(username);
-         safeStore = safeStore.concat(user.notes);
-      }
-    }
-    callback(null, safeStore);
-  };
-
-  //mine - works
-  that.getFollowsNotes = function(username, callback) {
-    console.log("4. models/User.js >> getFollowsNotes function called");
-    var safeStore = []
-
-    if (userExists(username)) {
-      var user = getUser(username);
-      var follows = user.follows;
-    } else {
-      callback({ msg : 'Invalid user.' });
-    }
-
-    for (var i = 0; i < follows.length; i++) {
-      var username = follows[i];
-      var userFollows = getUser(username);
-      safeStore = safeStore.concat(userFollows.notes);
-    }
-    callback(null, safeStore);
-  };
-
-  //mine - works
-  that.changeFollowStatus = function(username, usernameFollows, callback) {
+userSchema.statics.changeFollowStatus = function(username, usernameFollows, callback) {
       console.log("4. models/User.js >> changeFollowStatus function called");
-      //TODO: checks on names existing don't work
-
       var user = getUser(username);
+      if (user === emptyDbResponse) {
+        callback({ msg : 'Invalid user. '});
+      }
+
       var index = user.follows.indexOf(usernameFollows);
 
       if (index > -1) {
@@ -163,51 +278,51 @@ var User = (function User(_store) {
         //unfollow --> follow
         user.follows.push(usernameFollows);
       }
+      saveToDatabase(user);
       callback(null);
-   };
+};
 
-  that.addNote = function(username, note, callback) {
-    if (userExists(username)) {
-      var user = getUser(username);
-      note._id = user.notes.length;
-      user.notes.push(note);
-      callback(null);
-    } else {
-      callback({ msg : 'Invalid user.' });
-    }
-  };
+//m
+userSchema.statics.addNote = function(username, note, callback) {
+	var user = getUser(username);
+	if (user === emptyDbResponse) {
+		callback({ msg : 'Invalid user. '});
+	}
 
-  that.updateNote = function(username, noteId, newContent, callback) {
-    if (userExists(username)) {
-      var notes = getUser(username).notes;
-      if (notes[noteId]) {
-        notes[noteId].content = newContent;
-        callback(null);
-      } else {
-        callback({ msg : 'Invalid note.' });
-      }
-    } else {
-      callback({ msg : ' Invalid user.' });
-    }
-  };
+	var newNote =  { creator : username, content : note };
+	user.notes.push(newNote);
+	saveToDatabase(user);
+	callback(null);
+};
 
-  that.removeNote = function(username, noteId, callback) {
-    if (userExists(username)) {
-      var notes = getUser(username).notes;
-      if (notes[noteId]) {
-        delete notes[noteId];
-        callback(null);
-      } else {
-        callback({ msg : 'Invalid note.' });
-      }
-    } else {
-      callback({ msg : 'Invalid user.' });
-    }
-  };
+userSchema.statics.updateNote = function(username, noteId, newContent, callback) {
+	var user = getUser(username);
+	if (user === emptyDbResponse) {
+		callback({ msg : 'Invalid user. '});
+	}
 
-  Object.freeze(that);
-  return that;
+	if (user.notes[noteId]) {
+        	user.notes[noteId].content = newContent;
+        	callback(null);
+      	} else {
+        	callback({ msg : 'Invalid note.' });
+      	}
+	saveToDatabase(user);
+};
 
-})(_store);
+userSchema.statics.removeNote = function(username, noteId, callback) {
+	var user = getUser(username);
+	if (user === emptyDbResponse) {
+		callback({ msg : 'Invalid user. '});
+	}
 
-module.exports = User;
+	if (user.notes[noteId]) {
+        	delete notes[noteId];
+        	callback(null);
+      	} else {
+        	callback({ msg : 'Invalid note.' });
+      	}
+	saveToDatabase(user);
+};
+
+module.exports = mongoose.model("User", userSchema);

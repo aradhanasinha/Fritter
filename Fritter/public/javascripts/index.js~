@@ -24,6 +24,8 @@ var loadPage = function(template, data) {
 };
 
 var loadHomePage = function() {
+	console.log("loadHomePage called");
+	console.log(currentUser);
 	if (currentUser) {
 		loadNotesPage();
 	} else {
@@ -33,7 +35,8 @@ var loadHomePage = function() {
 
 var loadNotesPage = function() {
 	console.log("loadNotesPage called");
-	$.get('/notes', function(response) {
+	$.get('/users/current', function(response) {
+		console.log(response);
 		loadPage('notes', { notes: response.content.notes, currentUser: currentUser });
 	});
 };
@@ -53,7 +56,6 @@ var loadAllUsersPage = function() {
     }
 };
 
-//mine
 var loadAllNotesPage = function() {
     console.log("2. public/javascripts/index.js >> loadAllNotesPage function called");
     if(currentUser) {
@@ -66,7 +68,7 @@ var loadAllNotesPage = function() {
     }
 };
 
-//mine
+
 var loadFollowsNotesPage = function() {
     console.log("2. public/javascripts/index.js >> loadFollowsNotesPage function called");
     if(currentUser) {

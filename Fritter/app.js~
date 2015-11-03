@@ -14,6 +14,7 @@ var notes = require('./routes/notes');
 var allnotes = require('./routes/allnotes');
 var allusers = require('./routes/allusers');
 var follows = require('./routes/follows');
+var followsnotes = require('./routes/followsnotes');
 
 // Import User model
 var User = require('./models/User')

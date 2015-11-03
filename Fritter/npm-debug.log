@@ -8,8 +8,8 @@
 7 silly lifecycle 6170-notes@0.0.0~prestart: no script for prestart, continuing
 8 info lifecycle 6170-notes@0.0.0~start: 6170-notes@0.0.0
 9 verbose lifecycle 6170-notes@0.0.0~start: unsafe-perm in lifecycle true
-10 verbose lifecycle 6170-notes@0.0.0~start: PATH: /usr/lib/node_modules/npm/bin/node-gyp-bin:/home/aradhana/Documents/Semester5/6170/6170-recitations-master/6170-Notes-Demo-master/node_modules/.bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/local/lib/node_modules/mocha
-11 verbose lifecycle 6170-notes@0.0.0~start: CWD: /home/aradhana/Documents/Semester5/6170/6170-recitations-master/6170-Notes-Demo-master
+10 verbose lifecycle 6170-notes@0.0.0~start: PATH: /usr/lib/node_modules/npm/bin/node-gyp-bin:/home/aradhana/Documents/Semester5/6170/arsinh_proj3/Fritter/node_modules/.bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/local/lib/node_modules/mocha
+11 verbose lifecycle 6170-notes@0.0.0~start: CWD: /home/aradhana/Documents/Semester5/6170/arsinh_proj3/Fritter
 12 silly lifecycle 6170-notes@0.0.0~start: Args: [ '-c', 'node ./bin/www' ]
 13 silly lifecycle 6170-notes@0.0.0~start: Returned: code: 8  signal: null
 14 info lifecycle 6170-notes@0.0.0~start: Failed to exec start script
@@ -22,7 +22,7 @@
 15 verbose stack     at maybeClose (child_process.js:766:16)
 15 verbose stack     at Process.ChildProcess._handle.onexit (child_process.js:833:5)
 16 verbose pkgid 6170-notes@0.0.0
-17 verbose cwd /home/aradhana/Documents/Semester5/6170/6170-recitations-master/6170-Notes-Demo-master
+17 verbose cwd /home/aradhana/Documents/Semester5/6170/arsinh_proj3/Fritter
 18 error Linux 3.16.0-51-generic
 19 error argv "node" "/usr/bin/npm" "start"
 20 error node v0.10.40

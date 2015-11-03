@@ -6,9 +6,12 @@
           '/users/login',
           helpers.getFormData(this)
       ).done(function(response) {
+	  console.log("public/js/users >> submit >> debug statement:");
+	  console.log(response);
           currentUser = response.content.user;
           loadHomePage();
       }).fail(function(responseObject) {
+	  console.log("public/js/users >> submit >> fail debug statement:");
           var response = $.parseJSON(responseObject.responseText);
           $('.error').text(response.err);
       });
@@ -56,8 +59,6 @@
           '/follows',
            {usernameToChangeFollowStatusFor : usernameToChangeFollowStatusFor}
       ).fail(function(responseObject) {
-	  console.log(responseObject);
-	  console.log(responseObject.responseText);
           var response = $.parseJSON(responseObject.responseText);
           $('.error').text(response.err);
       });

@@ -24,6 +24,8 @@ var loadPage = function(template, data) {
 };
 
 var loadHomePage = function() {
+	console.log("loadHomePage called");
+	console.log(currentUser);
 	if (currentUser) {
 		loadNotesPage();
 	} else {
@@ -34,6 +36,7 @@ var loadHomePage = function() {
 var loadNotesPage = function() {
 	console.log("loadNotesPage called");
 	$.get('/notes', function(response) {
+		console.log(response);
 		loadPage('notes', { notes: response.content.notes, currentUser: currentUser });
 	});
 };

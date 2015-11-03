@@ -7,6 +7,18 @@ var session = require('express-session');
 var bodyParser = require('body-parser');
 require('handlebars/runtime');
 
+
+// DATABASE SETUP
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/test');
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function (callback) {
+    console.log("database connected");
+});
+
+
+
 // Import route handlers
 var index = require('./routes/index');
 var users = require('./routes/users');

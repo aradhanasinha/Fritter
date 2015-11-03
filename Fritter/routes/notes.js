@@ -87,13 +87,8 @@ router.post('*', requireContent);
     - err: on failure, an error message
 */
 router.get('/', function(req, res) {
-  User.getNotes(req.currentUser.username, function(err, notes) {
-    if (err) {
-      utils.sendErrResponse(res, 500, 'An unknown error occurred.');
-    } else {
-      utils.sendSuccessResponse(res, { notes: notes });
-    }
-  });
+  console.log("router/notes GET function called");
+  User.getNotes(req.currentUser.username, res, function(err) { });
 });
 
 

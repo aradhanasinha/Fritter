@@ -6,9 +6,13 @@
           '/users/login',
           helpers.getFormData(this)
       ).done(function(response) {
+	  console.log("public/js/users >> submit >> debug statement:");
+	  console.log(response);
           currentUser = response.content.user;
           loadHomePage();
       }).fail(function(responseObject) {
+	  console.log("public/js/users >> submit >> fail debug statement:");
+	  console.log(responseObject);
           var response = $.parseJSON(responseObject.responseText);
           $('.error').text(response.err);
       });
