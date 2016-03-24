@@ -116,7 +116,7 @@ router.post('/rf', function(req, res) {
     username = req.currentUser.username;
   }
 
-  Note.refreet(username, req.body.freetId, moment(), function(err, result) {
+  Note.refreet(username, req.body.noteId, moment(), function(err, result) {
     if (err) {
       utils.sendErrResponse(res, 403, err);
     } else {
@@ -141,7 +141,7 @@ router.post('/delete', function(req, res) {
     username = req.currentUser.username;
   }
 
-  Freet.deleteFreetById(username, req.body.freetId, function(err, result) {
+  Note.deleteNoteById(username, req.body.noteId, function(err, result) {
     if (err) {
       utils.sendErrResponse(res, 403, err);
     } else {
