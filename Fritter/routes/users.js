@@ -11,14 +11,14 @@ var User = require('../models/User');
   immediately in this case.
 */
 var isLoggedInOrInvalidBody = function(req, res) {
-  if (req.currentUser) {
-    utils.sendErrResponse(res, 403, 'There is already a user logged in.');
+  	if (req.currentUser) {
+        utils.sendErrResponse(res, 403, 'There is already a user logged in.');
+        return false;
+    } else if (!req.body.username) {
+        utils.sendErrResponse(res, 400, 'Username not provided.');
+        return false;
+    }
     return true;
-  } else if (!(req.body.username && req.body.password)) {
-    utils.sendErrResponse(res, 400, 'Username or password not provided.');
-    return true;
-  }
-  return false;
 };
 
 /*
@@ -40,9 +40,15 @@ var isLoggedInOrInvalidBody = function(req, res) {
 */
 router.post('/login', function(req, res) {
   if (isLoggedInOrInvalidBody(req, res)) {
-    return;
-  }
-  User.verifyPassword(req.body.username, req.body.password, req, res, function(err) {});
+        User.authUser(req.body.username, req.body.password, function(err,result) {
+            if (err) {
+                utils.sendErrResponse(res, 403, err);
+            } else {
+                req.session.username = req.body.username;
+                utils.sendSuccessResponse(res, { user : req.body.username });
+            }
+        });
+    }
 });
 
 /*
@@ -53,12 +59,12 @@ router.post('/login', function(req, res) {
     - err: on error, an error message
 */
 router.post('/logout', function(req, res) {
-  if (req.currentUser) {
-    req.session.destroy();
-    utils.sendSuccessResponse(res);
-  } else {
-    utils.sendErrResponse(res, 403, 'There is no user currently logged in.');
-  }
+    if (req.currentUser) {
+        req.session.destroy();
+        utils.sendSuccessResponse(res);
+    } else {
+        utils.sendErrResponse(res, 403, 'There is no user currently logged in.');
+    }
 });
 
 /*
@@ -80,12 +86,17 @@ router.post('/logout', function(req, res) {
     - success: true if user creation succeeded; false otherwise
     - err: on error, an error message
 */
-router.post('/', function(req, res) {
-  console.log("router: POST/users");
-  if (isLoggedInOrInvalidBody(req, res)) {
-    return;
-  }
-  User.createNewUser(req.body.username, req.body.password, res, function(err) { });
+router.post('/create', function(req, res) {
+    if (isLoggedInOrInvalidBody(req, res)) {
+        User.createUser(req.body.username, req.body.password, function(err,result) {
+            if (err) {
+                utils.sendErrResponse(res, 403, err);
+            } else {
+                req.session.username = req.body.username;
+                utils.sendSuccessResponse(res, { user : result.username });
+            }
+        });
+    }
 });
 
 /*
