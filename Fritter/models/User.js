@@ -41,12 +41,12 @@ userSchema.statics.getUserByUserName = function (inputUsername, callback) {
 };
 
 /*
-Change follow status
+Add a follower
  
   @param rawUsername {string} - username of follower
   @param callback {function} - function to call with error and result
  */
-userSchema.statics.changeFollowStatus = function(inputFollower, inputUsername, callback) {
+userSchema.statics.followUser = function(inputFollower, inputUsername, callback) {
     console.log("4. models/User.js >> changeFollowStatus function called");
       
     var follower = inputFollower.toLowerCase();
