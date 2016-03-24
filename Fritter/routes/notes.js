@@ -5,30 +5,14 @@ var utils = require('../utils/utils');
 
 var Note = require('../models/Note');
 
-
-/*
-  Grab a note from the store whenever one is referenced with an ID in the
-  request path (any routes defined with :note as a parameter).
-*/
-router.param('note', function(req, res, next, noteId) {
-  console.log("routes/notes.js >> router.param")
-  User.getNote(req.currentUser.username, noteId, function(err, note) {
-    if (note) {
-      req.note = note;
-      next();
-    } else {
-      utils.sendErrResponse(res, 404, 'Resource not found.');
-    }
-  });
-});
-
-
 /*
   At this point, all requests are authenticated and checked:
   1. Clients must be logged into some account
   2. If accessing or modifying a specific resource, the client must own that note
   3. Requests are well-formed
 */
+
+//GETTERS:
 
 /*
   GET /notes
@@ -41,12 +25,41 @@ router.param('note', function(req, res, next, noteId) {
 */
 router.get('/', function(req, res) {
   console.log("router/notes GET function called");
-  User.getNotes(req.currentUser.username, res, function(err) { });
+  var username = undefined;
+  if (req.currentUser) {
+    username = req.currentUser.username;
+    Note.getNotes(username, function(err,result) {
+        utils.sendSuccessResponse(res, result);
+    });
+  } else {
+    utils.sendErrResponse(res, 403, 'Invalid Authentication');
+  }
+  
+});
+
+/*
+  GET /notes/filter 
+  Request parameters:
+    - authors: authorList
+  Response: 
+    - success: true if success
+    - content: list of notes
+ */
+router.get('/filter', function(req, res) {
+  var username = undefined;
+  if (req.currentUser) {
+    username = req.currentUser.username;
+    Note.getNotesByAuthor(username, req.query.authors, function(err,result) {
+      utils.sendSuccessResponse(res, result);
+    });
+  } else {
+    utils.sendErrResponse(res, 403, 'Not authenticated');
+  }
 });
 
 
 /*
-  GET /notes/:note
+  GET /notes/:noteUUID
   Request parameters:
     - note: the unique ID of the note within the logged in user's note collection
   Response:
@@ -54,9 +67,17 @@ router.get('/', function(req, res) {
     - content: on success, the note object with ID equal to the note referenced in the URL
     - err: on failure, an error message
 */
-router.get('/:note', function(req, res) {
-  utils.sendSuccessResponse(res, req.note);
+router.get('/:fid', function(req, res) {
+    Note.getNoteById(req.params.fid, function(err,result) {
+        if (err) {
+            utils.sendErrResponse(res, 403, err);
+        } else {
+            utils.sendSuccessResponse(res, result);
+        }
+    });
 });
+
+//POST FUNCTIONS
 
 /*
   POST /notes
