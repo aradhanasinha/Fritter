@@ -13,7 +13,7 @@ var noteSchema = mongoose.Schema({
 //ADD FUNCTIONS
 
 /*
-Add a note to store; asssumes valid username
+Add a note; asssumes valid username
 
 inputUsername (string) - author username
 noteText (string) - note text
@@ -44,6 +44,60 @@ noteSchema.statics.addNote = function(inputUsername, noteText, timestamp, callba
     	callback("Invalid note")
     }
 }
+
+/*
+Add a retweeted note; asssumes valid username
+
+inputUsername (string) - author username
+id (string) - note uuid
+timestamp (object?) - datetime info
+callback (function) - function to be called with err or result
+ */
+noteSchema.statics.refreet = function(inputUsername, id, timestamp, callback) {
+    this.find({_id: id}, function(err, result) {
+        if (err) { //err  with queery finding note
+        	callback(err);
+        }
+        else if (result.length === 0) {
+        	callback("Note does not exist");
+        }
+
+        else {
+            if (inputUsername) {
+                var note = result[0];
+                var username = inputUsername.toLowerCase();
+
+                User.findByUsername(username, function(err, user) {
+                    if (err) { //err with query finding user
+                        callback("Invalid username");
+                    } 
+                    else if (username === note.author) { //case: retweet self
+                        callback("Cannot refreet your own note");
+                    } 
+                    else if (note.isRefreet) { //tries to retweet retweeted thing
+                        callback("Cannot refreet a refreeted note");
+                    } 
+                    else { //success: refreet the thing
+                        var newNote = new Note({
+                            text: note.text,
+                            ts: timestamp,
+                            author: user.username,
+                            authorId: user._id,
+                            isRefreet: true,
+                            originalAuthor: note.author,
+                        });
+                        newNote.save(callback);
+                    }
+                });
+            } 
+
+            else { //invaluid username
+            	callback("Invalid username");
+            }
+        }
+    });
+}
+
 
 //GET FUNCTIONS
 
