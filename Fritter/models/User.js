@@ -5,7 +5,7 @@
 var utils = require('../utils/utils');
 var mongoose = require("mongoose");
 var bcrypt = require('bcrypt');
-
+// Help: https://www.npmjs.com/package/bcrypt-nodejs
 
 var userSchema = new mongoose.Schema({
 	username: String,
@@ -107,6 +107,54 @@ userSchema.statics.getFollows = function (inputUsername) {
         }
     });
 };
+
+/*
+Create a new user
+
+newUsername (string) - username of new user
+newPassword (string) - password of new user
+callback (function) - function to call with error or result
+*/
+userSchema.statics.createUser = function (newUsername, newPassword, res, callback) {
+	console.log("Models > User > createUser function called");
+
+	var username = newUsername.toLowerCase();
+
+	//Source for RegEx: http://99webtools.com/blog/8-most-useful-regular-expressions/
+    if (username.match("^[a-z0-9_-]{3,16}$") && typeof newPassword === 'string') {
+        this.find({username: username}, function(err, result) { //check if it exists
+            if (err) {
+            	callback(err); 
+            }
+
+            //case: add new user w/bcrypt
+            else if (result.length === 0) {
+                var salt = bcrypt.genSaltSync(10); //ten is a nice number
+                var hash = bcrypt.hashSync(newPassword, salt);
+                var user = new User({
+                    username: username,
+                    password: hash,
+                    follows: []
+                });
+                user.save(function(err,result) {
+                    if (err) callback(err);
+                    else callback(null, {username: username});
+                });
+            } 
+
+            //case: username already exists
+            else {
+            	callback("User already exists");
+            }
+        });
+    } 
+
+    //case: invalid username or password
+    else {
+        callback("Invalid username or password");
+    }	
+};
+
 
 //_____________________________OBSOLETE__________________________________
 //OLD CODE FROM 5 Months Ago, commented out and slowly moved up as needed
@@ -237,38 +285,7 @@ userSchema.statics.verifyPassword = function(candidateUsername, candidatepw, req
 };
 
 //works
-userSchema.statics.createNewUser = function (newUsername, newPassword, res, callback) {
-	console.log("Models > User > createNewUser function called");
-	var newUser = new this();
-	this.find({ username: newUsername }, function(err, users) {
-  		if (err) {
-			console.log("ERROR: db find lookup");
-			utils.sendErrResponse(res, 500, 'An unknown error has occurred.');
-  		} else {
-  
-			if (users.length === 0) {
-				newUser.username = newUsername;
-				newUser.password = newPassword;
-				newUser.follows = [];
-				newUser.notes = [];
-	
-    				newUser.save(function (err) { 
-					if (err) {
-						console.log("ERROR: db save");
-						utils.sendErrResponse(res, 500, 'An unknown error has occurred.');
-					} else {
-						console.log("SUCCESS: new user registered");
-						utils.sendSuccessResponse(res, newUsername);
-					}
-				});
-  			} else {
-				console.log("ERROR: username already taken");
-				utils.sendErrResponse(res, 400, 'That username is already taken!');
-  			}
-		}
-	});
-	callback(null);	
-};
+
 
 userSchema.statics.getNote = function(username, noteId, callback) {
     	var user = getUser(username);
