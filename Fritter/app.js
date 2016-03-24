@@ -2,47 +2,38 @@ var express = require('express');
 var path = require('path');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
-var favicon = require('serve-favicon');
 var session = require('express-session');
 var bodyParser = require('body-parser');
-require('handlebars/runtime');
-
+var mongoose = require('mongoose');
 
 // DATABASE SETUP
-var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/test');
+mongoose.connect( process.env.MONGOLAB_URI || 'mongodb://localhost/fritter');
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function (callback) {
     console.log("database connected");
 });
 
-
-
 // Import route handlers
 var index = require('./routes/index');
 var users = require('./routes/users');
 var notes = require('./routes/notes');
-var allnotes = require('./routes/allnotes');
-var allusers = require('./routes/allusers');
-var follows = require('./routes/follows');
-var followsnotes = require('./routes/followsnotes');
 
 // Import User model
 var User = require('./models/User')
 
+//INIT APP
 var app = express();
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(express.static(path.join(__dirname, 'public'))); 
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(session({ secret : '6170', resave : true, saveUninitialized : true }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({ secret : 'dankmemes', resave: false, saveUninitialized: false }));
 
 // Authentication middleware. This function
 // is called on _every_ request and populates
@@ -51,17 +42,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 // in the session variable (accessed by the
 // encrypted cookied).
 app.use(function(req, res, next) {
-  console.log('In app.js');
   if (req.session.username) {
-    console.log(req.session.username);
     User.findByUsername(req.session.username, 
       function(err, user) {
-	console.log(err);
-	console.log(user);
         if (user) {
           req.currentUser = user;
         } else {
-	  console.log('Error ' + err);
+          req.currentUser = undefined;
           req.session.destroy();
         }
         next();
@@ -75,10 +62,7 @@ app.use(function(req, res, next) {
 app.use('/', index);
 app.use('/users', users);
 app.use('/notes', notes);
-app.use('/allnotes', allnotes);
-app.use('/allusers', allusers);
-app.use('/follows', follows);
-app.use('/followsnotes', followsnotes);
+
 
 // ERROR HANDLERS
 // Note: The methods below are called
@@ -109,6 +93,7 @@ if (app.get('env') === 'development') {
 app.use(function(err, req, res, next) {
   console.log(err);
   res.status(err.status || 500).end();
+  res.render('error');
 });
 
 module.exports = app;

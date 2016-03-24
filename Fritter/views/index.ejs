@@ -1,20 +1,30 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>6.170 Notes!</title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
-    <script src="/javascripts/handlebars.runtime-v4.0.2.js"></script>
-    <script src="/javascripts/templates.js"></script>
-    <script src="/javascripts/helpers.js"></script>
-    <script src="/javascripts/index.js"></script>
-    <script src="/javascripts/users.js"></script>
-    <script src="/javascripts/notes.js"></script>
+      <title>Fritter 6.170</title>
+
+      <script src="/js/outsourcedCode/jquery-2.1.4.min.js"></script>
+      <script src="/js/outsourcedCode/handlebars.runtime.min.js"></script>
+      <script src="/js/outsourcedCode/uuid.js"></script>
+      <script src="/js/outsourcedCode/moment.js"></script>
+
+      <script src="/js/templates.js"></script>
+      <script src="/js/index.js"></script>
+      <script src="/js/auth.js"></script>
+      <script src="/js/users.js"></script>
+      <script src="/js/note.js"></script>
+      <script src="/js/helpers.js"></script>
+
+      <link href="/css/style.css" rel="stylesheet">
   </head>
+
   <body>
-    <div id="main-container"></div>
-    <div id="footer">
-      <p>Today's date is <%= date %></p>
-    </div>
+      <div id="page">
+          <div id="header"></div>
+          <div id="popup"></div>
+          <div id="cover"></div>
+          <div id="container"></div>
+      </div>
   </body>
+
 </html>
