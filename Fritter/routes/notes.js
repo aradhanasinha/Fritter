@@ -80,67 +80,74 @@ router.get('/:fid', function(req, res) {
 //POST FUNCTIONS
 
 /*
-  POST /notes
+  POST /notes/add
   Request body:
-    - content: the content of the note
+    - text: the text of the note
   Response:
     - success: true if the server succeeded in recording the user's note
     - err: on failure, an error message
 */
-router.post('/', function(req, res) {
-  User.addNote(req.currentUser.username, {
-    content: req.body.content,
-    creator: req.currentUser.username
-  }, function(err, note) {
-    if (err) {
-      utils.sendErrResponse(res, 500, 'An unknown error occurred.');
-    } else {
-      utils.sendSuccessResponse(res);
-    }
+router.post('/add', function(req, res) {
+  var username = undefined;
+  if (req.currentUser) {
+    username = req.currentUser.username;
+  }
+
+  Note.addNote(username, req.body.note, moment(), function(err, result) {
+      if (err) {
+          utils.sendErrResponse(res, 403, err);
+      } else {
+          utils.sendSuccessResponse(res, result);
+      }
   });
-});
+})
 
 /*
-  POST /notes/:note
+  POST /notes/rf
   Request parameters:
     - note ID: the unique ID of the note within the logged in user's note collection.
   Response:
     - success: true if the server succeeded in recording the user's note
     - err: on failure, an error message
 */
-router.post('/:note', function(req, res) {
-  User.updateNote(
-    req.currentUser.username, 
-    req.note._id, 
-    req.body.content, 
-    function(err) {
-      if (err) {
-        utils.sendErrResponse(res, 500, 'An unknown error occurred.');
-      } else {
-        utils.sendSuccessResponse(res);
-      }
+router.post('/rf', function(req, res) {
+  var username = undefined;
+  if (req.currentUser) {
+    username = req.currentUser.username;
+  }
+
+  Note.refreet(username, req.body.freetId, moment(), function(err, result) {
+    if (err) {
+      utils.sendErrResponse(res, 403, err);
+    } else {
+      utils.sendSuccessResponse(res, result);
+    }
   });
-});
+})
+
+//DELETE FUNCTIONS:
 
 /*
-  DELETE /notes/:note
+  POST /notes/delete
   Request parameters:
     - note ID: the unique ID of the note within the logged in user's note collection
   Response:
     - success: true if the server succeeded in deleting the user's note
     - err: on failure, an error message
 */
-router.delete('/:note', function(req, res) {
-  User.removeNote(
-    req.currentUser.username, 
-    req.note._id, 
-    function(err) {
-      if (err) {
-        utils.sendErrResponse(res, 500, 'An unknown error occurred.');
-      } else {
-        utils.sendSuccessResponse(res);
-      }
+router.post('/delete', function(req, res) {
+  var username = undefined;
+  if (req.currentUser) {
+    username = req.currentUser.username;
+  }
+
+  Freet.deleteFreetById(username, req.body.freetId, function(err, result) {
+    if (err) {
+      utils.sendErrResponse(res, 403, err);
+    } else {
+      utils.sendSuccessResponse(res, result);
+    }
   });
-});
+})
 
 module.exports = router;
