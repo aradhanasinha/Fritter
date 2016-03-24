@@ -49,7 +49,7 @@ callback    (function)- function to call with err or result
 
 */
 userSchema.statics.followUser = function(inputFollower, inputUsername, callback) {
-    console.log("4. models/User.js >> changeFollowStatus function called");
+    console.log("4. models/User.js >> followUser function called");
       
     var follower = inputFollower.toLowerCase();
     var username = inputUsername.toLowerCase();
@@ -88,6 +88,25 @@ userSchema.statics.followUser = function(inputFollower, inputUsername, callback)
     });
 };
 
+/*
+Get the follows part of the User object
+
+inputUsername (string) - username to check
+callback (function) - function to call with error or result
+*/
+userSchema.statics.getFollows = function (inputUsername) {
+	console.log("4. models/User.js >> getFollows function called");
+
+	var username = inputUsername.toLowerCase();
+
+	this.find({ username: username }, function(err, result) {
+        if (err) callback(err);
+        else if (result.length === 0) callback("User not found");
+        else {
+            callback(null, result[0].follows);
+        }
+    });
+};
 
 //_____________________________OBSOLETE__________________________________
 //OLD CODE FROM 5 Months Ago, commented out and slowly moved up as needed
@@ -174,20 +193,7 @@ userSchema.statics.saveToDatabase = function(user) {
 };
 
 //Statics
-userSchema.statics.getListOfUsersByWhetherFollowed = function (username) {
-	console.log("4. models/User.js >> getListOfUsersByWhetherFollowed function called");
 
-	var user = getUser(username);
-	if (user === emptyDbResponse) {
-		callback({ msg : 'Invalid user.' });
-	}
-
-	var listOfAllUsers = getListOfAllUsernames();
-	listOfAllUsers.splice( listOfAllUsers.indexOf(username) , 1);
-	var usersFollowed = user.follows;
-	var usersNotFollowed = arrayDiff(listOfAllUsers, usersFollowed);
-	callback(null, usersFollowed, usersNotFollowed);
-};
 
 //error goes through this one
 userSchema.statics.findByUsername = function (username, callback) {
