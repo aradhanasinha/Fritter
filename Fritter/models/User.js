@@ -310,21 +310,6 @@ userSchema.statics.updateNote = function(username, noteId, newContent, callback)
 	saveToDatabase(user);
 };
 
-userSchema.statics.removeNote = function(username, noteId, callback) {
-	var user = getUser(username);
-	if (user === emptyDbResponse) {
-		callback({ msg : 'Invalid user. '});
-	}
-
-	if (user.notes[noteId]) {
-        	delete notes[noteId];
-        	callback(null);
-      	} else {
-        	callback({ msg : 'Invalid note.' });
-      	}
-	saveToDatabase(user);
-};
-
 */
 
 

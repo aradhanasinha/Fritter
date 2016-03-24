@@ -44,7 +44,37 @@ noteSchema.statics.addNote = function(inputUsername, noteText, timestamp, callba
     }
 }
 
+/*
+Delete note
 
+inputUsername (string) - username of user deleting the thing
+id (string) - uuid
+callback (function) - function called with err or result
+*/
+noteSchema.statics.deleteNoteById = function(inputUsername, id, callback) {
+    if (inputUsername) {
+        var username = inputUsername.toLowerCase();
+
+        //only an author of the note can remove it
+        this.remove({author: username, _id: id}, function(err, result) {
+            if (err) { //error with query
+            	callback(err);
+            }
+
+            else if (result.result.n === 0) { //nothing found to delete (check len?)
+            	callback("Could not delete");
+            }
+
+            else { //success
+            	callback(null);
+            }
+        });
+    } 
+
+    else { //no username specified
+    	callback("Invalid username");
+    }
+}
 
 /*
 Delete all notes
