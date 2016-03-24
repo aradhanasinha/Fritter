@@ -53,8 +53,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(function(req, res, next) {
   console.log('In app.js');
   if (req.session.username) {
+    console.log(req.session.username);
     User.findByUsername(req.session.username, 
       function(err, user) {
+	console.log(err);
+	console.log(user);
         if (user) {
           req.currentUser = user;
         } else {
@@ -104,6 +107,7 @@ if (app.get('env') === 'development') {
 // Production error handler.
 // No stacktraces leaked to user.
 app.use(function(err, req, res, next) {
+  console.log(err);
   res.status(err.status || 500).end();
 });
 

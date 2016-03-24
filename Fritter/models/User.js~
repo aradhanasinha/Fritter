@@ -79,12 +79,13 @@ var arrayDiff = function(a1, a2) {
     	return diff;
 };
 
-
 userSchema.statics.getUser = function (name) {
 	console.log("getUser internal fxn called");
-  	User.find({ username: name }, setCurrentUser(err, user));
-  	var user = currentUser;
-  	return user
+	console.log(name);
+  	return userSchema.find({ username: name }, function(err, user) { 
+		console.log("thing");
+		console.log(user);
+	});
 };
 
 userSchema.statics.getListOfAllUsernames = function () {
@@ -117,8 +118,11 @@ userSchema.statics.getListOfUsersByWhetherFollowed = function (username) {
 	callback(null, usersFollowed, usersNotFollowed);
 };
 
+//error goes through this one
 userSchema.statics.findByUsername = function (username, callback) {
-	var user = getUser(username);
+	console.log("userschema.statics.findByUsername>>");	
+	var user = userSchema.statics.getUser(username);
+	console.log(user);
 	if (user === emptyDbResponse) {
 		callback({ msg : 'No such user!' });
 	}
@@ -129,6 +133,7 @@ userSchema.statics.findByUsername = function (username, callback) {
 userSchema.statics.verifyPassword = function(candidateUsername, candidatepw, req, res, callback) {
 	console.log("Models > User > verifyPassword function called");
 	this.find({ username: candidateUsername }, function(err, users) {
+		console.log(users);
   		if (err) {
 			console.log("ERROR: db find lookup");
 			utils.sendErrResponse(res, 500, 'An unknown error has occurred.');
@@ -202,7 +207,7 @@ userSchema.statics.getNote = function(username, noteId, callback) {
     	}
 };
 
-//can't reach from notes router, halppp
+//can't reach notes router from index.js, halppp
 userSchema.statics.getNotes = function(currentUsername, res, callback) {
 	console.log("Models > User > getNotes function called");
 	this.findOne({ username: currentUsername }, function(err, user) {

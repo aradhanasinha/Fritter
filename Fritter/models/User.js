@@ -4,18 +4,78 @@
 // modify any code in the controller.
 var utils = require('../utils/utils');
 var mongoose = require("mongoose");
+var bcrypt = require('bcrypt');
 
 
-var userSchema = mongoose.Schema({
+var userSchema = new mongoose.Schema({
 	username: String,
 	password: String,
 	follows : [String],
-	notes: [{ creator: String, content: String }]
 });
 
 // Model code for a User object in the note-taking app.
-// Each User object stores a username, password, and collection
-// of notes. Each note has some textual content and is specified
+// Each User object stores a username, password, and follows info
+
+/*
+Find a user by their username, error thrown if not found
+
+inputUsername (string) - username to check
+callback (function) - function to call with error or result
+*/
+userSchema.statics.getUserByUserName = function (inputUsername, callback) {
+	console.log("getUserByUserName called");
+	console.log(inputUsername);
+
+	var username = inputUsername.toLowerCase();
+	this.find({ username: username }, function(err, result) {
+        if (err) {
+        	callback(err);
+        }
+        else if (result.length > 0) {
+        	callback(null, {username: username, _id: result[0]._id});
+        }
+        else { //query succeeded, no results
+        	callback("User not found");
+        }
+    });
+};
+
+/*
+Change follow status
+ 
+  @param rawUsername {string} - username of follower
+  @param callback {function} - function to call with error and result
+ */
+userSchema.statics.changeFollowStatus = function(inputFollower, inputUsername, callback) {
+    console.log("4. models/User.js >> changeFollowStatus function called");
+      
+    var follower = inputFollower.toLowerCase();
+    var username = inputUsername.toLowerCase();
+
+      var user = getUser(username);
+      if (user === emptyDbResponse) {
+        callback({ msg : 'Invalid user. '});
+      }
+
+      var index = user.follows.indexOf(usernameFollows);
+
+      if (index > -1) {
+        //follow --> unfollow
+        user.follows.splice(index, 1);
+      } else {
+        //unfollow --> follow
+        user.follows.push(usernameFollows);
+      }
+      saveToDatabase(user);
+      callback(null);
+};
+
+
+//_____________________________OBSOLETE__________________________________
+//OLD CODE FROM 5 Months Ago, commented out and slowly moved up as needed
+//Attempting to not store all notes under a user object, seems more legit
+
+// Each note has some textual content and is specified
 // by the owner's username as well as an ID. Each ID is unique
 // only within the space of each User, so a (username, noteID)
 // uniquely specifies any note.
@@ -80,12 +140,6 @@ var arrayDiff = function(a1, a2) {
 };
 
 
-userSchema.statics.getUser = function (name) {
-	console.log("getUser internal fxn called");
-  	User.find({ username: name }, setCurrentUser(err, user));
-  	var user = currentUser;
-  	return user
-};
 
 userSchema.statics.getListOfAllUsernames = function () {
   	var query = User.find({});
@@ -117,8 +171,11 @@ userSchema.statics.getListOfUsersByWhetherFollowed = function (username) {
 	callback(null, usersFollowed, usersNotFollowed);
 };
 
+//error goes through this one
 userSchema.statics.findByUsername = function (username, callback) {
-	var user = getUser(username);
+	console.log("userschema.statics.findByUsername>>");	
+	var user = userSchema.statics.getUser(username);
+	console.log(user);
 	if (user === emptyDbResponse) {
 		callback({ msg : 'No such user!' });
 	}
@@ -129,6 +186,7 @@ userSchema.statics.findByUsername = function (username, callback) {
 userSchema.statics.verifyPassword = function(candidateUsername, candidatepw, req, res, callback) {
 	console.log("Models > User > verifyPassword function called");
 	this.find({ username: candidateUsername }, function(err, users) {
+		console.log(users);
   		if (err) {
 			console.log("ERROR: db find lookup");
 			utils.sendErrResponse(res, 500, 'An unknown error has occurred.');
