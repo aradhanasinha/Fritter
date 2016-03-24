@@ -1,8 +1,22 @@
 var mongoose = require("mongoose");
+var User = require('./User');
 
 var noteSchema = mongoose.Schema({
-  creator: String,
-  content: String,
+  text: String,
+  ts: String, 
+  author: String,
+  isRefreet: Boolean,
+  originalAuthor: String,
+  authorId: {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
 });
 
-module.exports = mongoose.model("Note", noteSchema);
+/*
+Delete all notes
+ */
+noteSchema.statics.clearNotes = function() {
+    this.remove({}, function() {});
+}
+
+
+var Freet = mongoose.model('Note', noteSchema);
+module.exports = Notes;
