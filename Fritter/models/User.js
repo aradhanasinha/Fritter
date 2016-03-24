@@ -295,19 +295,6 @@ userSchema.statics.getFollowsNotes = function(username, callback) {
     	callback(null, safeStore);
 };
 
-//m
-userSchema.statics.addNote = function(username, note, callback) {
-	var user = getUser(username);
-	if (user === emptyDbResponse) {
-		callback({ msg : 'Invalid user. '});
-	}
-
-	var newNote =  { creator : username, content : note };
-	user.notes.push(newNote);
-	saveToDatabase(user);
-	callback(null);
-};
-
 userSchema.statics.updateNote = function(username, noteId, newContent, callback) {
 	var user = getUser(username);
 	if (user === emptyDbResponse) {
