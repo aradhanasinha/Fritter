@@ -78,7 +78,7 @@ router.post('/logout', function(req, res) {
 
   Does NOT automatically log in the user.
 
-  POST /users
+  POST /users/create
   Request body:
     - username
     - password
@@ -109,12 +109,63 @@ router.post('/create', function(req, res) {
     - success.user: if success.loggedIn, the currently logged in user
 */
 router.get('/current', function(req, res) {
-  console.log("users/current route reached");
-  if (req.currentUser) {
-    utils.sendSuccessResponse(res, { loggedIn : true, user : req.currentUser.username });
-  } else {
-    utils.sendSuccessResponse(res, { loggedIn : false });
-  }
+    if (req.currentUser) {
+        utils.sendSuccessResponse(res, { loggedIn : true, user : req.currentUser.username });
+    } else {
+        utils.sendSuccessResponse(res, { loggedIn : false });
+    }
 });
+
+
+/*
+  Get the user's follows list
+
+  GET /users/follows 
+  Request parameters: 
+    - username: username of the follower
+  Response: 
+    - success: true if login is success
+    - content: list of usernames the user follows
+    - err: error message
+ */
+router.get('/follows', function(req, res) {
+    if (req.currentUser) {
+        User.getFollows(req.query.username, function(err, result) {
+            if (err) {
+                utils.sendErrResponse(res, 403, err);
+            } else {
+                utils.sendSuccessResponse(res, { result: result} );
+            }
+        })
+    } else {
+        utils.sendSuccessResponse(res, { loggedIn : false });
+    }
+});
+
+/*
+  Follow user
+
+  POST /users/follow
+  Request parameters: 
+    - username: username to follow
+  Response: 
+    - success: true if login is success
+    - content: list of usernames the user follows
+    - err: error message
+ */
+router.post('/follow', function(req, res) {
+    if (req.currentUser) {
+        User.followUser(req.currentUser.username, req.body.username, function(err, result) {
+            if (err) {
+                utils.sendErrResponse(res, 403, err);
+            } else {
+                utils.sendSuccessResponse(res, { result: result} );
+            }
+        })
+    } else {
+        utils.sendSuccessResponse(res, { loggedIn : false });
+    }
+});
+
 
 module.exports = router;
