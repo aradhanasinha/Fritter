@@ -109,7 +109,7 @@ userSchema.statics.getFollows = function (inputUsername) {
 };
 
 /*
-Create a new user
+Create a new user (case does not matter with username, does with password)
 
 newUsername (string) - username of new user
 newPassword (string) - password of new user
@@ -154,6 +154,40 @@ userSchema.statics.createUser = function (newUsername, newPassword, res, callbac
         callback("Invalid username or password");
     }	
 };
+
+
+/*
+Authenticate a user (w/bcrypt)
+ 
+inputUsername (string) - username to authenticate
+password (string) - password to authenticate
+callback (function) - function to call with err or result
+*/
+userSchema.statics.authUser = function(inputUsername, password, callback) {
+    console.log("Models > User > authUser function called");
+
+    var username = inputUsername.toLowerCase();
+    this.find({username: username}, function(err,result) {
+        if (err) { //query failed
+        	callback(err);
+        }
+
+        else if (result.length > 0) { //you have results, wooo!
+            if (bcrypt.compareSync(password, result[0].password)) { //...and it matches!!
+            	callback(null, {username: username});
+            }
+            else { //wrong login
+            	callback("Login Failed");
+            }
+        } 
+
+        else { //results empty for some reason
+        	callback("Login Failed");
+        }
+    });
+}
+
+
 
 
 //_____________________________OBSOLETE__________________________________
@@ -254,35 +288,6 @@ userSchema.statics.findByUsername = function (username, callback) {
 	callback(null, user);
 };
 
-//works
-userSchema.statics.verifyPassword = function(candidateUsername, candidatepw, req, res, callback) {
-	console.log("Models > User > verifyPassword function called");
-	this.find({ username: candidateUsername }, function(err, users) {
-		console.log(users);
-  		if (err) {
-			console.log("ERROR: db find lookup");
-			utils.sendErrResponse(res, 500, 'An unknown error has occurred.');
-  		} else {
-  
-			if (users.length === 0) {
-				console.log("ERROR: no user exists");
-				utils.sendErrResponse(res, 403, 'Username or password invalid.');
-			} else {
-				var user = users[0];
-				if (candidatepw === user.password) {
-      					req.session.username = candidateUsername;
-					console.log("SUCCESS: log-in approved.");
-      					utils.sendSuccessResponse(res, { user : candidateUsername });
-    				} else {
-					console.log("ERROR: password mismatch");
-      					utils.sendErrResponse(res, 403, 'Username or password invalid.');
-    				}
-			}
-		}
-	});
-	callback(null);
-    	
-};
 
 //works
 
