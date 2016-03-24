@@ -22,7 +22,7 @@ Find a user by their username, error thrown if not found
 inputUsername (string) - username to check
 callback (function) - function to call with error or result
 */
-userSchema.statics.getUserByUserName = function (inputUsername, callback) {
+userSchema.statics.findByUsername = function (inputUsername, callback) {
 	console.log("getUserByUserName called");
 	console.log(inputUsername);
 
@@ -199,43 +199,6 @@ userSchema.statics.authUser = function(inputUsername, password, callback) {
 // only within the space of each User, so a (username, noteID)
 // uniquely specifies any note.
 
-//Global Variables:
-var emptyDbResponse = "no entries found";
-
-//Helper functions, only accessible to internal functions
-var infoRetrieved = emptyDbResponse;
-var currentUser = emptyDbResponse;
-
-var setCurrentUser = function(err, user) {
-	console.log("setCurrentUser called");
-  	if (err) {
-     		return utils.sendErrResponse(user,
-			 500, 'An unknown error occurred.');
-  	}
-  
-	if (!user) {
-    		currentUser = emptyDbResponse;
-  	} else {
-    		currentUser = user;
-  	}
-	console.log(currentUser);
-};
-
-var setInfoRetrieved = function(err, info) {
-  	if (err) {
-     		return utils.sendErrResponse(info, 
-			500, 'An unknown error occurred.');
-  	}
-  
-	if (!info) {
-    		infoRetrieved = emptyDbResponse;
-  	} else {
-    		infoRetrieved = info;
-  	}
-};
-
-
-//Internal functions: all functions that have mongoose code
 var arrayDiff = function(a1, a2) {
     	var a=[], diff=[];
 
@@ -258,40 +221,7 @@ var arrayDiff = function(a1, a2) {
     	return diff;
 };
 
-
-
-userSchema.statics.getListOfAllUsernames = function () {
-  	var query = User.find({});
-  	query.select('username');
-  	query.exec(setInfoRetrieved(err, info));
-  	var allUsernames = infoRetrieved;
-  	return allUsernames
-};
-
-userSchema.statics.saveToDatabase = function(user) {
-	user.save(function (err) { if (err) 
-		return utils.sendErrResponse('save', 500, 'An unknown error occurred.');
-	});
-};
-
-//Statics
-
-
-//error goes through this one
-userSchema.statics.findByUsername = function (username, callback) {
-	console.log("userschema.statics.findByUsername>>");	
-	var user = userSchema.statics.getUser(username);
-	console.log(user);
-	if (user === emptyDbResponse) {
-		callback({ msg : 'No such user!' });
-	}
-	callback(null, user);
-};
-
-
-//works
-
-
+/* NOTES related functions, being moved
 userSchema.statics.getNote = function(username, noteId, callback) {
     	var user = getUser(username);
     	if (user === emptyDbResponse) {
@@ -317,13 +247,13 @@ userSchema.statics.getNotes = function(currentUsername, res, callback) {
 			utils.sendErrResponse(res, 500, 'An unknown error has occurred.');
   		} else {  
 			utils.sendSuccessResponse(res, { notes: user.notes });			
-			/* if (users.length === 0) {
+			if (users.length === 0) {
 				console.log("ERROR: no user exists in db");
 				utils.sendErrResponse(res, 500, 'An unknown error has occurred.');
 			} else {
 				var user = users[0];
 				utils.sendSuccessResponse(res, { notes: user.notes });
-			} */
+			} 
 		}
 	});    	
     	callback(null);
@@ -363,27 +293,6 @@ userSchema.statics.getFollowsNotes = function(username, callback) {
       		safeStore = safeStore.concat(userFollows.notes);
     	}
     	callback(null, safeStore);
-};
-
-  //mine - works
-userSchema.statics.changeFollowStatus = function(username, usernameFollows, callback) {
-      console.log("4. models/User.js >> changeFollowStatus function called");
-      var user = getUser(username);
-      if (user === emptyDbResponse) {
-        callback({ msg : 'Invalid user. '});
-      }
-
-      var index = user.follows.indexOf(usernameFollows);
-
-      if (index > -1) {
-        //follow --> unfollow
-        user.follows.splice(index, 1);
-      } else {
-        //unfollow --> follow
-        user.follows.push(usernameFollows);
-      }
-      saveToDatabase(user);
-      callback(null);
 };
 
 //m
@@ -428,5 +337,7 @@ userSchema.statics.removeNote = function(username, noteId, callback) {
       	}
 	saveToDatabase(user);
 };
+
+*/
 
 module.exports = mongoose.model("User", userSchema);
