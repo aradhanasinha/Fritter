@@ -10,6 +10,7 @@ var noteSchema = mongoose.Schema({
   authorId: {type: mongoose.Schema.Types.ObjectId, ref: 'User'}
 });
 
+//ADD FUNCTIONS
 
 /*
 Add a note to store; asssumes valid username
@@ -43,6 +44,102 @@ noteSchema.statics.addNote = function(inputUsername, noteText, timestamp, callba
     	callback("Invalid note")
     }
 }
+
+//GET FUNCTIONS
+
+/*
+Get all notes by the current user
+
+inputUsername (string) - must be current user
+callback (function) - function called with err or result
+*/
+noteSchema.statics.getNotes = function(inputUsername, callback) {
+    if (inputUsername) {
+        var username = inputUsername.toLowerCase();
+
+        this.find({}, function(err, notes) {
+            
+            if (err) { //case: error with query
+            	callback(err);
+            }
+
+            else { //filter by username
+                User.findByUsername(username, function(err, result) {
+                    if (err) { //error with query
+                    	callback(null, []);
+                    }
+
+                    else {
+                    	callback(null, notes)
+                    }
+                });
+            }
+        });
+    } 
+
+    else { //username not specified
+    	callback(null, []);
+    }
+};
+
+/*
+Get all notes by the list of users
+
+inputUsername (string) - must be current user
+authorList (object) - usernames to get tweets from
+callback (function) - function called with err or result
+*/
+noteSchema.statics.getNotesByAuthor = function(inputUsername, authorList, callback) {
+    if (inputUsername) {
+        var username = inputUsername.toLowerCase();
+
+        this.find({author: {$in: authorList}}, function(err, notes) {
+            if (err) { //error with query
+            	callback(err);
+            }
+
+            else {//filter
+                User.findByUsername(username, function(err, result) {
+                    if (err) { //err with query
+                    	callback(null, []);
+                    }
+                    else { //success
+                    	callback(null, notes)
+                    }
+                });
+            }
+        });
+    } 
+
+    else { //invalid username
+    	callback(null, []);
+    }
+};
+
+/*
+Get note by id
+
+id (string) - uuid
+callback (function) - function called with err or result
+*/
+noteSchema.statics.getNoteById = function(id, callback) {
+    this.find({_id: id}, function(err, result) {
+        if (err) { //error with query
+        	callback(err);
+        }
+        else if (result.length > 0) { //found tweets
+        	callback(null, result[0]);
+        }
+
+        else { //nothing useful found
+        	callback("Freet not found");
+        }
+    });
+}
+
+
+
+//DELETE FUNCTIONS
 
 /*
 Delete note
