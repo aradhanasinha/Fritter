@@ -340,4 +340,7 @@ userSchema.statics.removeNote = function(username, noteId, callback) {
 
 */
 
-module.exports = mongoose.model("User", userSchema);
+
+var User = mongoose.model('User', userSchema);
+
+module.exports = User;
