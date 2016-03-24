@@ -43,31 +43,49 @@ userSchema.statics.getUserByUserName = function (inputUsername, callback) {
 /*
 Add a follower
  
-  @param rawUsername {string} - username of follower
-  @param callback {function} - function to call with error and result
- */
+inputFollower (string)- username of user doing the following
+inputUsername (string)- username of user being followed
+callback    (function)- function to call with err or result
+
+*/
 userSchema.statics.followUser = function(inputFollower, inputUsername, callback) {
     console.log("4. models/User.js >> changeFollowStatus function called");
       
     var follower = inputFollower.toLowerCase();
     var username = inputUsername.toLowerCase();
 
-      var user = getUser(username);
-      if (user === emptyDbResponse) {
-        callback({ msg : 'Invalid user. '});
-      }
+    this.find({ username: follower }, function(err, result) {
+        this.find({username: username}, function(err2, user) {
+            //case: errors or user not found cases
+            if (err2) {
+            	callback(err2);
+            }
+            else if (err) {
+            	callback(err);
+            }
+            else if (result.length === 0 || user.length === 0) {
+                username = undefined;
+                callback("User not found");
+            }
 
-      var index = user.follows.indexOf(usernameFollows);
+            //case: already a follower
+            else if (result[0].follows.indexOf(username) > -1) {
+                callback("User already follows");
+            }
 
-      if (index > -1) {
-        //follow --> unfollow
-        user.follows.splice(index, 1);
-      } else {
-        //unfollow --> follow
-        user.follows.push(usernameFollows);
-      }
-      saveToDatabase(user);
-      callback(null);
+            //case: tries to follow self 
+            else if (username === follower) {
+                callback("User cannot follow self");
+            }
+
+            //case: add the follower
+            else {
+                var follows = result[0].follows;
+                follows.push(username);
+                this.update({username: follower}, {follows: follows}, callback)
+            }
+        });
+    });
 };
 
 
