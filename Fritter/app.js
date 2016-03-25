@@ -7,7 +7,7 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 
 // DATABASE SETUP
-mongoose.connect( process.env.MONGOLAB_URI || 'mongodb://localhost/fritter');
+mongoose.connect( process.env.MONGOLAB_URI || 'mongodb://localhost/test');
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function (callback) {

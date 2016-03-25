@@ -236,4 +236,4 @@ noteSchema.statics.clearNotes = function() {
 
 
 var Note = mongoose.model('Note', noteSchema);
-module.exports = Notes;
+module.exports = Note;

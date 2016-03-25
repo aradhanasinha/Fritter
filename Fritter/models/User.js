@@ -115,7 +115,7 @@ newUsername (string) - username of new user
 newPassword (string) - password of new user
 callback (function) - function to call with error or result
 */
-userSchema.statics.createUser = function (newUsername, newPassword, res, callback) {
+userSchema.statics.createUser = function (newUsername, newPassword, callback) {
 	console.log("Models > User > createUser function called");
 
 	var username = newUsername.toLowerCase();
