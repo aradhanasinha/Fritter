@@ -94,7 +94,7 @@ Get the follows part of the User object
 inputUsername (string) - username to check
 callback (function) - function to call with error or result
 */
-userSchema.statics.getFollows = function (inputUsername) {
+userSchema.statics.getFollows = function (inputUsername, callback) {
 	console.log("4. models/User.js >> getFollows function called");
 
 	var username = inputUsername.toLowerCase();
