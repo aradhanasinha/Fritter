@@ -5,11 +5,11 @@ body {
 }
 
 h1 {
-  font-size: 1.2em;
+  font-size: 1.8em;
 }
 
 a {
-  color: #00B7FF;
+  color: green;
 }
 
 #container {
@@ -31,13 +31,13 @@ a {
   height: 200px;
   background-color: white;
   border-bottom: 1px solid black;
-  box-shadow: 0 4px 12px black;
+  box-shadow: 0 6px 15px black;
   z-index: 50; }
 
 #title {
-  font: 50px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font: 70px "Lucida Grande", Helvetica, Arial, sans-serif;
   margin: 0;
-  padding-top: 40px;
+  padding-top: 20px;
   color: black; }
 
 #user-info {
@@ -49,8 +49,8 @@ a {
 
 #logout-button {
   text-decoration: none;
+  font: 16px "Lucida Grande", Helvetica, Arial, sans-serif;
   font-style: italic;
-  font-size: 125%;
   color: black; }
 
 /* Login popup*/
@@ -58,18 +58,19 @@ a {
   position: absolute;
   margin-left: auto;
   margin-right: auto;
-  padding: 10px;
+  padding: 5px;
   text-align: center;
+  font: 30px "Lucida Grande", Helvetica, Arial, sans-serif;
   top: 20%;
   left: 0;
   right: 0;
-  width: 500px;
-  height: 300px;
+  width: 300px;
+  height: 275px;
   margin: 0 auto;
   background-color: white;
   border: 1px solid black;
-  border-radius: 12px;
-  box-shadow: 0 0 20px black;
+  border-radius: 15px;
+  box-shadow: 0 0 30px black;
   display: none;
   z-index: 99; }
 
@@ -97,7 +98,9 @@ a {
   text-align: center; }
 
 #note-input {
-  border: 1px solid #BD1550; }
+  border: 1px solid #BD1550; 
+  height: 30px;
+}
 
 .search-row-button {
   position: relative;
@@ -105,12 +108,12 @@ a {
 
 /* notes */
 .note-box {
-  padding: 10px;
-  margin: 4px; }
+  padding: 5px;
+  margin: 14px; }
 
 .note-box {
   border: 1px solid white;
-  overflow-x: scroll; }
+}
 
 .note-time {
   font-size: 75%; }
@@ -124,7 +127,21 @@ a {
 
 .delete-button,
 .rf-button {
-  float: right; }
+  float: right; 
+  border: 1px solid black;
+  border-radius: 5px;
+  height: 20px;
+  margin: 20px auto;
+  padding: 0 20px;
+  background-color: white;
+  font: 12px "Lucida Grande", Helvetica, Arial, sans-serif;
+  color: black; 
+}
+
+.rf-button:hover {
+  background-color: black;
+  color: white;
+}
 
 /* Forms */
 .no-border {
@@ -137,16 +154,17 @@ a {
   text-align: center; }
 
 .input {
-  font: 20px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font: 16px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
 .button {
-  border: none;
+  border: 1px solid black;
+  border-radius: 5px;
   height: 35px;
   margin: 20px auto;
   padding: 0 20px;
   background-color: white;
-  font: 16px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font: 18px "Lucida Grande", Helvetica, Arial, sans-serif;
   color: black; }
 
 .button:hover {

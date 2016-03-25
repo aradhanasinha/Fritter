@@ -12,7 +12,7 @@
         <form id="note-form">
           <input id="note-input" class="input" type="text" maxlength="160">
           <button id="note-button" class="button search-row-button" type="submit">Publish!</button>
-          <button id="view-follows" class="button search-row-button">Filter Follows</button>
+          <button id="view-follows" class="button search-row-button">Only See People I Follow</button>
         </form>
       </div>
     {{/if}}
@@ -27,10 +27,13 @@
       {{#each notes}}
         <div id={{this._id}} class="note-box">
           {{#if this.ownership}}<button note={{this._id}} class="delete-button no-border">X</button>
-          {{else}} {{#if this.isRefreet}} {{else}}<button note={{this._id}} class="rf-button">RF</button>{{/if}}
+          {{else}} 
+            {{#if this.isRefreet}} 
+            {{else}} <button note={{this._id}} class="rf-button">ReFreet</button>
+            {{/if}}
           {{/if}}
           <b><a href="#" class="note-user" user={{this.author}}>@{{this.author}} </a></b>
-          {{#if this.isRefreet}} refreeted {{this.originalAuthor}} {{/if}}
+          {{#if this.isRefreet}} reFreeted {{this.originalAuthor}} {{/if}}
           <em class="note-time">({{this.ts}})</em> - <p class="note-text">{{this.text}}</p>
         </div>
       {{/each}}

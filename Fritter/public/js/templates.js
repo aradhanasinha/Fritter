@@ -3,7 +3,7 @@
 templates['header'] = template({"1":function(container,depth0,helpers,partials,data) {
     var helper;
 
-  return "<h2 id=\"user-info\">Signed in as "
+  return "<h2 id=\"user-info\">Logged in as: "
     + container.escapeExpression(((helper = (helper = helpers.currentUser || (depth0 != null ? depth0.currentUser : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"currentUser","hash":{},"data":data}) : helper)))
     + ". </h2>\n<a id=\"logout-button\" href=\"#\" class=\"header-button\">Log out</a>\n";
 },"3":function(container,depth0,helpers,partials,data) {
@@ -46,7 +46,7 @@ templates['home'] = template({"1":function(container,depth0,helpers,partials,dat
 },"7":function(container,depth0,helpers,partials,data) {
     return "<button class=\"button button-sm\" id=\"go-home\">back</button>";
 },"9":function(container,depth0,helpers,partials,data) {
-    return "      <div id=\"new-note-box\">\n        <form id=\"note-form\">\n          <input id=\"note-input\" class=\"input\" type=\"text\" maxlength=\"160\">\n          <button id=\"note-button\" class=\"button search-row-button\" type=\"submit\">Publish!</button>\n          <button id=\"view-follows\" class=\"button search-row-button\">Filter Follows</button>\n        </form>\n      </div>\n";
+    return "      <div id=\"new-note-box\">\n        <form id=\"note-form\">\n          <input id=\"note-input\" class=\"input\" type=\"text\" maxlength=\"160\">\n          <button id=\"note-button\" class=\"button search-row-button\" type=\"submit\">Publish!</button>\n          <button id=\"view-follows\" class=\"button search-row-button\">Only See People I Follow</button>\n        </form>\n      </div>\n";
 },"11":function(container,depth0,helpers,partials,data) {
     return "          Log in or register to view notes!\n";
 },"13":function(container,depth0,helpers,partials,data) {
@@ -70,21 +70,19 @@ templates['home'] = template({"1":function(container,depth0,helpers,partials,dat
 },"14":function(container,depth0,helpers,partials,data) {
     return "<button note="
     + container.escapeExpression(container.lambda((depth0 != null ? depth0._id : depth0), depth0))
-    + " class=\"delete-button no-border\">X</button>\n          ";
+    + " class=\"delete-button no-border\">X</button>\n";
 },"16":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return " "
-    + ((stack1 = helpers["if"].call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.isRefreet : depth0),{"name":"if","hash":{},"fn":container.program(17, data, 0),"inverse":container.program(19, data, 0),"data":data})) != null ? stack1 : "")
-    + "\n";
+  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.isRefreet : depth0),{"name":"if","hash":{},"fn":container.program(17, data, 0),"inverse":container.program(19, data, 0),"data":data})) != null ? stack1 : "");
 },"17":function(container,depth0,helpers,partials,data) {
-    return " ";
+    return "            ";
 },"19":function(container,depth0,helpers,partials,data) {
-    return "<button note="
+    return " <button note="
     + container.escapeExpression(container.lambda((depth0 != null ? depth0._id : depth0), depth0))
-    + " class=\"rf-button\">RF</button>";
+    + " class=\"rf-button\">ReFreet</button>\n";
 },"21":function(container,depth0,helpers,partials,data) {
-    return " refreeted "
+    return " reFreeted "
     + container.escapeExpression(container.lambda((depth0 != null ? depth0.originalAuthor : depth0), depth0))
     + " ";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
@@ -97,9 +95,9 @@ templates['home'] = template({"1":function(container,depth0,helpers,partials,dat
     + "    </div>\n  </div>\n</div>";
 },"useData":true});
 templates['login'] = template({"1":function(container,depth0,helpers,partials,data) {
-    return "<form id=\"register-form\">\n    <h3>Register</h3>\n    <input name=\"username\" type=\"text\" class=\"form-ele input\" placeholder=\"username\">\n    <input name=\"password\" type=\"password\" class=\"form-ele input\" placeholder=\"password\">\n    <button id=\"register-button\" class=\"form-ele button\">Register</button>\n</form>\n";
+    return "<form id=\"register-form\">\n    <h3>Create Account:</h3>\n    <input name=\"username\" type=\"text\" class=\"form-ele input\" placeholder=\"username\">\n    <input name=\"password\" type=\"password\" class=\"form-ele input\" placeholder=\"password\">\n    <button id=\"register-button\" class=\"form-ele button\">Register</button>\n</form>\n";
 },"3":function(container,depth0,helpers,partials,data) {
-    return "<form id=\"login-form\">\n    <h3>Log in</h3>\n    <input name=\"username\" type=\"text\" class=\"form-ele input\" placeholder=\"username\">\n    <input name=\"password\" type=\"password\" class=\"form-ele input\" placeholder=\"password\">\n    <button id=\"login-button\" class=\"form-ele button\">Login</button>\n</form>\n";
+    return "<form id=\"login-form\">\n    <h3>Welcome Back:</h3>\n    <input name=\"username\" type=\"text\" class=\"form-ele input\" placeholder=\"username\">\n    <input name=\"password\" type=\"password\" class=\"form-ele input\" placeholder=\"password\">\n    <button id=\"login-button\" class=\"form-ele button\">Login</button>\n</form>\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1;
 
