@@ -1,0 +1,164 @@
+body {
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  font-size: 1.2em;
+}
+
+a {
+  color: #00B7FF;
+}
+
+#container {
+  background-color: white; }
+
+#home {
+  position: relative;
+  top: -8px;
+  width: 600px;
+  margin: 0 auto;
+  background-color: white;
+  padding: 20px 60px;
+  min-height: calc(100vh - 250px); }
+
+/* Header */
+#header {
+  position: relative;
+  text-align: center;
+  height: 200px;
+  background-color: white;
+  border-bottom: 1px solid black;
+  box-shadow: 0 4px 12px black;
+  z-index: 50; }
+
+#title {
+  font: 50px "Lucida Grande", Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding-top: 40px;
+  color: black; }
+
+#user-info {
+  display: inline-block;
+  color: black; }
+
+.header-button {
+  display: inline-block; }
+
+#logout-button {
+  text-decoration: none;
+  font-style: italic;
+  font-size: 125%;
+  color: black; }
+
+/* Login popup*/
+#popup {
+  position: absolute;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 10px;
+  text-align: center;
+  top: 20%;
+  left: 0;
+  right: 0;
+  width: 500px;
+  height: 300px;
+  margin: 0 auto;
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 12px;
+  box-shadow: 0 0 20px black;
+  display: none;
+  z-index: 99; }
+
+#cover {
+  position: absolute;
+  top: 0;
+  background-color: black;
+  min-height: 100vmax;
+  height: 100%;
+  width: 100%;
+  opacity: 0.4;
+  display: none;
+  z-index: 80; }
+
+.form-ele {
+  display: block;
+  margin: 10px auto; }
+
+#close-popup {
+  float: right; }
+
+/* note form */
+#new-note-box {
+  margin: 15px 0;
+  text-align: center; }
+
+#note-input {
+  border: 1px solid #BD1550; }
+
+.search-row-button {
+  position: relative;
+  top: -2px; }
+
+/* notes */
+.note-box {
+  padding: 10px;
+  margin: 4px; }
+
+.note-box {
+  border: 1px solid white;
+  overflow-x: scroll; }
+
+.note-time {
+  font-size: 75%; }
+
+.note-user {
+  cursor: pointer; }
+
+.note-user,
+.note-text {
+  display: inline-block; }
+
+.delete-button,
+.rf-button {
+  float: right; }
+
+/* Forms */
+.no-border {
+  cursor: pointer;
+  border: none;
+  background-color: transparent; }
+
+.error {
+  color: red;
+  text-align: center; }
+
+.input {
+  font: 20px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+.button {
+  border: none;
+  height: 35px;
+  margin: 20px auto;
+  padding: 0 20px;
+  background-color: white;
+  font: 16px "Lucida Grande", Helvetica, Arial, sans-serif;
+  color: black; }
+
+.button:hover {
+  background-color: black;
+  color: white;
+}
+
+.button-sm {
+  height: 25px;
+}
+
+.button-light {
+  background-color: transparent;
+  border: 2px solid black;
+  color: black; }

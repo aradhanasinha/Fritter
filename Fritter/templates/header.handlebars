@@ -1,0 +1,8 @@
+<h1 id="title">fritter</h1>
+{{#if currentUser}}
+<h2 id="user-info">Signed in as {{currentUser}}. </h2>
+<a id="logout-button" href="#" class="header-button">Log out</a>
+{{else}}
+<button id="show-login" class="header-button button button-light">Log in</button>
+<button id="show-register" class="header-button button button-light">Register</button>
+{{/if}}
