@@ -17,6 +17,13 @@ var userSchema = new mongoose.Schema({
 // Each User object stores a username, password, and follows info
 
 /*
+Clears all users, super useful for testing
+*/
+userSchema.statics.clearUsers = function() {
+    this.remove({}, function() {});
+}
+
+/*
 Find a user by their username, error thrown if not found
 
 inputUsername (string) - username to check

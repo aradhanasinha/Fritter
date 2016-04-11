@@ -3,7 +3,7 @@ var mongoose = require("mongoose");
 var moment = require("moment");
 var User = require("../models/User");
 var Note = require("../models/Note");
-mongoose.connect('mongodb://localhost/model_test');
+mongoose.connect('mongodb://localhost/test');
 User.clearUsers();
 
 //global user vars
