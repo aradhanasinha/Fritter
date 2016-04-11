@@ -30,11 +30,12 @@ inputUsername (string) - username to check
 callback (function) - function to call with error or result
 */
 userSchema.statics.findByUsername = function (inputUsername, callback) {
-	console.log("getUserByUserName called");
-	console.log(inputUsername);
+	console.log("findByUsername called");
 
 	var username = inputUsername.toLowerCase();
 	this.find({ username: username }, function(err, result) {
+        console.log(result)
+        console.log(err)
         if (err) {
         	callback(err);
         }
@@ -144,8 +145,12 @@ userSchema.statics.createUser = function (newUsername, newPassword, callback) {
                     follows: []
                 });
                 user.save(function(err,result) {
-                    if (err) callback(err);
-                    else callback(null, {username: username});
+                    if (err) {
+                        callback(err);
+                    }
+                    else {
+                        callback(null, {username: username});
+                    }
                 });
             } 
 

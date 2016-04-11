@@ -33,7 +33,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(session({ secret : 'dankmemes', resave: false, saveUninitialized: false }));
+app.use(session({ secret : 'helpme', resave: false, saveUninitialized: false }));
 
 // Authentication middleware. This function
 // is called on _every_ request and populates
@@ -77,7 +77,6 @@ app.use(function(req, res, next) {
 });
 
 // Development error handler.
-// Will print stacktraces.
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
@@ -89,7 +88,6 @@ if (app.get('env') === 'development') {
 }
 
 // Production error handler.
-// No stacktraces leaked to user.
 app.use(function(err, req, res, next) {
   console.log(err);
   res.status(err.status || 500).end();

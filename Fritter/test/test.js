@@ -16,13 +16,62 @@ User.createUser("j arthur random", "foobar", function(){});
 \***********************************************************************/
 describe("User", function() {
 
+    describe("#createUser", function () {
+
+        it("1. Existing user, return error", function (done) {
+            User.createUser("jack florey", "hackitoergosum", function(err, result) {
+                assert.notDeepEqual(err, null);
+                done();
+            });
+        });
+
+        it("2. Username too short, return error", function (done) {
+            User.createUser("ec", "fredthedorm", function(err, result) {
+                assert.notDeepEqual(err, null);
+                done();
+            });
+        });
+
+        it("3. Username too long, return error", function (done) {
+            User.createUser("eastcampusalumnihouseingestatthedawnoftimeitself", "longlivefred", function(err, result) {
+                assert.notDeepEqual(err, null);
+                done();
+            });
+        });
+
+        it("4. Invalid username characters, return error", function (done) {
+            User.createUser("i<3u", "notreally", function(err, result) {
+                assert.notDeepEqual(err, null);
+                done();
+            });
+        });
+
+        it("5. Successful User Created, lowercase username", function (done) {
+            User.createUser("acleankitchen", "onecandream", function(err, result) {
+                assert.deepEqual(err, null);
+                assert.deepEqual(result, {username: "acleankitchen"});
+                done();
+            });
+        });
+
+        it("6. Successful User Created, uppercase username", function (done) {
+            User.createUser("Beast", "shallrise", function(err, result) {
+                assert.deepEqual(err, null);
+                assert.deepEqual(result, {username: "beast"});
+                done();
+            });
+        });
+    });
+
     describe("#findByUsername", function () {
 
         it("1. retrieve existing user", function (done) {
-            User.findByUsername("jack florey", function(err, result) {
-                assert.deepEqual(err, null);
-                assert.deepEqual(result.username, "jack florey");
-                done();
+            User.createUser("jack florey", "krotus", function() { 
+                User.findByUsername("jack florey", function(err, result) {
+                    assert.deepEqual(err, null);
+                    assert.deepEqual(result.username, "jack florey");
+                    done();
+                });
             });
         });
 
@@ -112,7 +161,7 @@ describe("User", function() {
     describe("#authUser", function () {
 
         it("1. nonexistent user, return error", function (done) {
-            User.authUser("hello", "hoo", function(err, result) {
+            User.authUser("floorPi", "three", function(err, result) {
                 assert.notDeepEqual(err, null);
                 done();
             });
@@ -141,52 +190,7 @@ describe("User", function() {
 
     });
 
-    describe("#createUser", function () {
-
-        it("1. Existing user, return error", function (done) {
-            User.createUser("jack florey", "hackitoergosum", function(err, result) {
-                assert.notDeepEqual(err, null);
-                done();
-            });
-        });
-
-        it("2. Username too short, return error", function (done) {
-            User.createUser("ec", "fredthedorm", function(err, result) {
-                assert.notDeepEqual(err, null);
-                done();
-            });
-        });
-
-        it("3. Username too long, return error", function (done) {
-            User.createUser("eastcampusalumnihouseingestatthedawnoftimeitself", "longlivefred", function(err, result) {
-                assert.notDeepEqual(err, null);
-                done();
-            });
-        });
-
-        it("4. Invalid username characters, return error", function (done) {
-            User.createUser("i<3u", "notreally", function(err, result) {
-                assert.notDeepEqual(err, null);
-                done();
-            });
-        });
-
-        it("5. Successful User Created, lowercase username", function (done) {
-            User.createUser("acleankitchen", "onecandream", function(err, result) {
-                assert.deepEqual(err, null);
-                assert.deepEqual(result, {username: "eek"});
-                done();
-            });
-        });
-
-        it("6. Successful User Created, uppercase username", function (done) {
-            User.createUser("Beast", "shallrise", function(err, result) {
-                assert.deepEqual(err, null);
-                assert.deepEqual(result, {username: "blah"});
-                done();
-            });
-        });
-    });
+    
 
 });
 
